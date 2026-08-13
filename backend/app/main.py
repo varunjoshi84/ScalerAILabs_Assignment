@@ -8,12 +8,27 @@ from app.routers.transcripts import router as transcripts_router
 from app.routers.action_items import router as action_items_router
 from app.seed import seed_db
 
+from sqlalchemy import text
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # 1. Create database tables on startup
     Base.metadata.create_all(bind=engine)
+
+    # 2. Auto-migrate schema for missing columns on SQLite
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("ALTER TABLE transcript_segments ADD COLUMN is_highlighted BOOLEAN DEFAULT 0"))
+            conn.commit()
+        except Exception:
+            pass
+        try:
+            conn.execute(text("ALTER TABLE transcript_segments ADD COLUMN comment TEXT"))
+            conn.commit()
+        except Exception:
+            pass
     
-    # 2. Run idempotent database seeding
+    # 3. Run idempotent database seeding
     db = SessionLocal()
     try:
         seed_db(db)
