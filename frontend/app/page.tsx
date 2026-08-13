@@ -14,7 +14,7 @@ import MeetingsView from "../components/MeetingsView";
 import AskFredView from "../components/AskFredView";
 import { Meeting, MeetingDetail } from "./types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://scalerailabs-assignment-oedh.onrender.com";
 
 export default function Home() {
   // 1. Session Authenticator & State Machine
