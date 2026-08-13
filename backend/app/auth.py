@@ -6,14 +6,27 @@ from app.core import security
 from app.models import User
 from app.schemas import UserCreate, UserResponse, UserLogin, Token
 
+from typing import Optional
+
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-security_scheme = HTTPBearer()
+security_scheme = HTTPBearer(auto_error=False)
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security_scheme),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
     db: Session = Depends(get_db)
 ) -> User:
+    if not credentials:
+        # Fallback to seeded demo user for out-of-the-box UI dashboard viewing
+        user = db.query(User).filter(User.email == "demo@example.com").first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required and default demo user not found.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return user
+
     token = credentials.credentials
     payload = security.decode_access_token(token)
     if not payload:

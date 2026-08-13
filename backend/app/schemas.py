@@ -51,9 +51,15 @@ class TranscriptSegmentCreate(BaseModel):
 class TranscriptSegmentResponse(TranscriptSegmentCreate):
     id: int
     meeting_id: int
+    is_highlighted: bool
+    comment: Optional[str] = None
 
     class Config:
         from_attributes = True
+
+class TranscriptSegmentUpdate(BaseModel):
+    is_highlighted: Optional[bool] = None
+    comment: Optional[str] = None
 
 class TranscriptSearchResponse(BaseModel):
     meeting_id: int

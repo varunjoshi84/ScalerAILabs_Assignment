@@ -50,6 +50,8 @@ class TranscriptSegment(Base):
     speaker_name = Column(String, nullable=False)
     timestamp_seconds = Column(Integer, nullable=False)
     text = Column(Text, nullable=False)
+    is_highlighted = Column(Boolean, default=False)
+    comment = Column(Text, nullable=True)
 
     # Relationships
     meeting = relationship("Meeting", back_populates="transcript_segments")

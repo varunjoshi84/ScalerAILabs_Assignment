@@ -1,5 +1,5 @@
 import re
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Response
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.auth import get_current_user
@@ -135,7 +135,13 @@ def list_meetings(
     query = db.query(Meeting).filter(Meeting.owner_id == current_user.id)
 
     if search:
-        query = query.filter(Meeting.title.ilike(f"%{search}%"))
+        from sqlalchemy import or_
+        query = query.outerjoin(TranscriptSegment).filter(
+            or_(
+                Meeting.title.ilike(f"%{search}%"),
+                TranscriptSegment.text.ilike(f"%{search}%")
+            )
+        ).distinct()
     
     if date_from:
         query = query.filter(Meeting.date >= date_from)
@@ -265,3 +271,89 @@ def delete_meeting(
     db.delete(db_meeting)  # SQLAlchemy handles cascade delete for participants, segments, summary, and action items
     db.commit()
     return {"message": "Meeting successfully deleted"}
+
+@router.get("/{meeting_id}/export/markdown")
+def export_meeting_markdown(
+    meeting_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    db_meeting = db.query(Meeting).filter(Meeting.id == meeting_id, Meeting.owner_id == current_user.id).first()
+    if not db_meeting:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Meeting not found"
+        )
+        
+    # Generate Markdown content
+    md = f"# {db_meeting.title}\n"
+    md += f"**Date:** {db_meeting.date.strftime('%Y-%m-%d %H:%M:%S')}\n"
+    md += f"**Duration:** {db_meeting.duration // 60} minutes\n"
+    md += f"**Participants:** {', '.join([p.name for p in db_meeting.participants])}\n\n"
+    
+    if db_meeting.summary:
+        md += "## AI Summary & Overview\n"
+        md += f"{db_meeting.summary.overview_text}\n\n"
+        if db_meeting.summary.key_topics:
+            md += "### Key Topics\n"
+            for topic in db_meeting.summary.key_topics:
+                md += f"- {topic}\n"
+            md += "\n"
+            
+    if db_meeting.action_items:
+        md += "## Action Items\n"
+        for item in db_meeting.action_items:
+            status_str = "[x]" if item.is_completed else "[ ]"
+            assignee_str = f" (Assignee: {item.assignee})" if item.assignee else ""
+            md += f"- {status_str} {item.text}{assignee_str}\n"
+        md += "\n"
+        
+    if db_meeting.transcript_segments:
+        md += "## Meeting Transcript\n"
+        for seg in db_meeting.transcript_segments:
+            # Format time as MM:SS
+            minutes = seg.timestamp_seconds // 60
+            seconds = seg.timestamp_seconds % 60
+            time_str = f"{minutes:02d}:{seconds:02d}"
+            md += f"**{seg.speaker_name}** ({time_str}): {seg.text}\n\n"
+            
+    filename = f"{db_meeting.title.lower().replace(' ', '_')}_notes.md"
+    return Response(
+        content=md,
+        media_type="text/markdown",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+@router.get("/{meeting_id}/export/txt")
+def export_meeting_text(
+    meeting_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    db_meeting = db.query(Meeting).filter(Meeting.id == meeting_id, Meeting.owner_id == current_user.id).first()
+    if not db_meeting:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Meeting not found"
+        )
+        
+    txt = f"Meeting Title: {db_meeting.title}\n"
+    txt += f"Date: {db_meeting.date.strftime('%Y-%m-%d %H:%M:%S')}\n"
+    txt += f"Duration: {db_meeting.duration // 60} minutes\n"
+    txt += f"Participants: {', '.join([p.name for p in db_meeting.participants])}\n"
+    txt += "="*50 + "\n\n"
+    
+    if db_meeting.transcript_segments:
+        txt += "TRANSCRIPT:\n"
+        for seg in db_meeting.transcript_segments:
+            minutes = seg.timestamp_seconds // 60
+            seconds = seg.timestamp_seconds % 60
+            time_str = f"{minutes:02d}:{seconds:02d}"
+            txt += f"[{time_str}] {seg.speaker_name}: {seg.text}\n"
+            
+    filename = f"{db_meeting.title.lower().replace(' ', '_')}_transcript.txt"
+    return Response(
+        content=txt,
+        media_type="text/plain",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )

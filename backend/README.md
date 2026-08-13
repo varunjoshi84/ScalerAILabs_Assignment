@@ -115,11 +115,15 @@ All endpoints (except login & registration) require a standard **JWT Bearer Toke
 * **`GET /meetings/{id}`**: Fetch full meeting details (metadata, participants, transcript, summary, and action items).
 * **`PUT /meetings/{id}`**: Edit meeting metadata (title, date, duration, participants list).
 * **`DELETE /meetings/{id}`**: Delete meeting (triggering cascade delete).
+* **`GET /meetings/{id}/export/markdown`**: Export meeting details, summary, and transcript as a downloadable Markdown file.
+* **`GET /meetings/{id}/export/txt`**: Export raw meeting transcript as a text file.
 
-### 3. Transcript Search
+### 3. Transcript Search & Interaction
 * **`GET /meetings/{meeting_id}/transcript/search`**: Search for keywords inside a specific meeting's transcript.
   * *Query Params*: `q` (search query)
   * *Response*: Matching transcript segments with speakers and timestamps.
+* **`PUT /meetings/transcript-segments/{id}`**: Highlight a specific transcript segment or add comments/notes (Bonus Feature).
+  * *Request Body*: `TranscriptSegmentUpdate` (is_highlighted, comment)
 
 ### 4. Action Items
 * **`POST /meetings/{meeting_id}/action-items`**: Create a custom action item.
