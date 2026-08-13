@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Fireflies.ai — AI Meeting Assistant & Transcripts",
-  description: "Transcribe, summarize, search, and analyze your team interactions automatically with AskFred AI.",
+  title: "Fireflies.ai",
+  description: "AI Meeting Assistant & Transcripts",
 };
 
 export default function RootLayout({
