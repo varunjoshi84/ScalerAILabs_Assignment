@@ -3,6 +3,9 @@
 > **SDE Fullstack Assignment Submission**  
 > *A full-stack, production-grade replica of the Fireflies.ai meeting-assistant platform featuring bi-directional transcript-to-media playback synchronization, dynamic LLM summary generation, task checklist management, and a standalone AskFred AI Assistant.*
 
+🔗 **Live Demo (Frontend)**: [https://fire-flies-ai-labs.vercel.app/](https://fire-flies-ai-labs.vercel.app/)  
+🔗 **Live API (Backend)**: [https://scalerailabs-assignment-oedh.onrender.com/docs](https://scalerailabs-assignment-oedh.onrender.com/docs)
+
 ---
 
 ## 📸 Executive Summary & Architecture Overview
