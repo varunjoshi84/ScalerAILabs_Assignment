@@ -17,21 +17,25 @@ if db_url.startswith("sqlite+libsql://"):
         else:
             db_url += "/?secure=true"
             
-    # Append authToken from env if available and not already in the connection string
-    import os
-    auth_token = os.getenv("TURSO_AUTH_TOKEN") or os.getenv("AUTH_TOKEN")
+    # Append authToken from settings if available and not already in connection string
+    auth_token = settings.TURSO_AUTH_TOKEN
     if auth_token and "authToken" not in db_url:
         db_url += f"&authToken={auth_token}"
 
-# Double check if we can actually load the dialect
+# Double check if we can actually load the dialect and have credentials
 if "libsql" in db_url:
     try:
+        # If we have a remote libsql URL but no token is provided, raise an error to trigger the SQLite fallback
+        # (Since remote Turso databases require authentication)
+        if not settings.TURSO_AUTH_TOKEN and "authToken" not in db_url:
+            raise ValueError("TURSO_AUTH_TOKEN is not set in environment variables.")
+            
         from sqlalchemy.dialects import registry
         registry.load("sqlite.libsql")
-    except Exception:
-        # Fallback to local SQLite if dialect is missing (common during local dev/tests)
-        print("Warning: 'sqlalchemy-libsql' is not installed or failed to load. Falling back to local SQLite database.")
-        db_url = "sqlite:///./sql_app.db"
+    except Exception as e:
+        # Fallback to local SQLite if dialect is missing or auth token is not configured
+        print(f"Warning: {e} Falling back to local SQLite database (meetings.db).")
+        db_url = "sqlite:///./meetings.db"
 
 # For SQLite (including libsql local connection), we need connect_args check_same_thread
 if db_url.startswith("sqlite") and not db_url.startswith("sqlite+libsql"):

@@ -3,14 +3,11 @@ import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any
 import jwt
-from sqlalchemy.orm import Session
 from app.core.config import settings
-from app.models.user import User
-from app.schemas.user import UserCreate
 
-# Password Hashing Functions using PBKDF2 (built-in, no external dependencies)
+# Password Hashing via PBKDF2 (native Python, secure and dependency-free)
 def get_password_hash(password: str) -> str:
-    # Generate a secure 16-byte salt
+    # 16-byte secure random salt
     salt = secrets.token_hex(16)
     iterations = 100000
     dk = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), iterations)
@@ -29,27 +26,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     except Exception:
         return False
 
-# User Management Functions
-def get_user_by_email(db: Session, email: str) -> Optional[User]:
-    return db.query(User).filter(User.email == email).first()
-
-def get_user_by_id(db: Session, user_id: int) -> Optional[User]:
-    return db.query(User).filter(User.id == user_id).first()
-
-def create_user(db: Session, user_in: UserCreate) -> User:
-    hashed_password = get_password_hash(user_in.password)
-    db_user = User(
-        email=user_in.email,
-        hashed_password=hashed_password
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
-
-# JWT Management Functions
-ALGORITHM = "HS256"
-
+# JWT Access Token Helpers
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> tuple[str, datetime]:
     to_encode = data.copy()
     if expires_delta:
@@ -57,14 +34,15 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     else:
         expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     
+    # Store exp claim as Unix timestamp
     to_encode.update({"exp": int(expire.timestamp())})
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
     return encoded_jwt, expire
 
 def decode_access_token(token: str) -> Optional[Dict[str, Any]]:
     try:
-        # jwt.decode checks exp claim automatically
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
+        # jwt.decode automatically validates expiration (exp)
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         return payload
     except jwt.PyJWTError:
         return None

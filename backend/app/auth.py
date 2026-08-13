@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.schemas.user import UserCreate, UserResponse, TokenResponse, UserLogin
-from app.services import auth as auth_service
-from app.models.user import User
+from app.core import security
+from app.models import User
+from app.schemas import UserCreate, UserResponse, UserLogin, Token
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -15,11 +15,11 @@ def get_current_user(
     db: Session = Depends(get_db)
 ) -> User:
     token = credentials.credentials
-    payload = auth_service.decode_access_token(token)
+    payload = security.decode_access_token(token)
     if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
+            detail="Invalid or expired authentication token",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
@@ -27,11 +27,11 @@ def get_current_user(
     if not user_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token payload",
+            detail="Invalid token claims",
             headers={"WWW-Authenticate": "Bearer"},
         )
         
-    user = auth_service.get_user_by_id(db, user_id=int(user_id))
+    user = db.query(User).filter(User.id == int(user_id)).first()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -42,43 +42,37 @@ def get_current_user(
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
-    db_user = auth_service.get_user_by_email(db, email=user_in.email)
+    db_user = db.query(User).filter(User.email == user_in.email).first()
     if db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="A user with this email already exists"
         )
-    return auth_service.create_user(db, user_in)
+    
+    hashed_password = security.get_password_hash(user_in.password)
+    new_user = User(
+        email=user_in.email,
+        name=user_in.name,
+        hashed_password=hashed_password
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=Token)
 def login(login_in: UserLogin, db: Session = Depends(get_db)):
-    user = auth_service.get_user_by_email(db, email=login_in.email)
-    if not user or not auth_service.verify_password(login_in.password, user.hashed_password):
+    user = db.query(User).filter(User.email == login_in.email).first()
+    if not user or not security.verify_password(login_in.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User account is deactivated"
-        )
         
-    # Generate stateless JWT token
-    token, expires_at = auth_service.create_access_token(data={"sub": str(user.id)})
+    # Create access token with 'sub' containing user id
+    token, _ = security.create_access_token(data={"sub": str(user.id)})
     return {
         "access_token": token,
-        "token_type": "bearer",
-        "expires_at": expires_at
+        "token_type": "bearer"
     }
-
-@router.post("/logout", status_code=status.HTTP_200_OK)
-def logout(credentials: HTTPAuthorizationCredentials = Depends(security_scheme)):
-    # With stateless JWT, client-side must delete the token.
-    return {"message": "Successfully logged out. Please discard token on client side."}
-
-@router.get("/me", response_model=UserResponse)
-def read_current_user(current_user: User = Depends(get_current_user)):
-    return current_user
