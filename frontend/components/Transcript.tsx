@@ -10,6 +10,7 @@ interface TranscriptProps {
   isPlaying: boolean;
   onSegmentClick: (time: number) => void;
   onUpdateSegment: (segmentId: number, isHighlighted: boolean, comment: string | null) => Promise<void>;
+  externalSearchQuery?: string;
 }
 
 export default function Transcript({
@@ -18,11 +19,14 @@ export default function Transcript({
   isPlaying,
   onSegmentClick,
   onUpdateSegment,
+  externalSearchQuery = "",
 }: TranscriptProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [currentCommentText, setCurrentCommentText] = useState("");
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
+  
+  const effectiveSearchQuery = externalSearchQuery || searchQuery;
 
   // 1. Locate the active segment based on current time
   let activeIndex = -1;
@@ -114,7 +118,7 @@ export default function Transcript({
   };
 
   return (
-    <div className="flex flex-col h-full bg-white border border-gray-200 rounded-xl overflow-hidden font-sans">
+    <div className="flex flex-col h-full min-h-0 bg-white border border-gray-200 rounded-xl overflow-hidden font-sans">
       {/* Search Header */}
       <div className="p-3 border-b border-gray-150 flex items-center gap-2 bg-gray-50/50 select-none">
         <Search className="w-4 h-4 text-gray-400" />
@@ -138,7 +142,7 @@ export default function Transcript({
       {/* Transcript Scroll Container */}
       <div 
         ref={transcriptContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4 max-h-[500px] scrollbar-thin"
+        className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin"
       >
         {segments.length === 0 ? (
           <div className="h-40 flex flex-col items-center justify-center text-gray-400 text-sm">
@@ -147,7 +151,7 @@ export default function Transcript({
         ) : (
           segments.map((seg) => {
             const isActive = activeSegmentId === seg.id;
-            const hasMatch = searchQuery && seg.text.toLowerCase().includes(searchQuery.toLowerCase());
+            const hasMatch = effectiveSearchQuery && seg.text.toLowerCase().includes(effectiveSearchQuery.toLowerCase());
             
             return (
               <div
@@ -201,7 +205,7 @@ export default function Transcript({
 
                   {/* Transcript Text */}
                   <p className="text-sm leading-relaxed text-gray-700 select-text">
-                    {highlightMatches(seg.text, searchQuery)}
+                    {highlightMatches(seg.text, effectiveSearchQuery)}
                   </p>
 
                   {/* Note display */}

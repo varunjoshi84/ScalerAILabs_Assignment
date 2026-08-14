@@ -366,181 +366,6 @@ export default function DetailView({
             </div>
           </div>
 
-          {/* AI Filters */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-gray-700">
-              <span>AI FILTERS</span>
-              <span className="text-[10px] text-gray-400">▲</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button 
-                onClick={() => setActiveAiFilter(activeAiFilter === "datetime" ? "all" : "datetime")}
-                className={`p-2 rounded-lg flex items-center justify-between border cursor-pointer transition-all ${
-                  activeAiFilter === "datetime" 
-                    ? "bg-purple-50 border-purple-300 text-purple-700 font-bold shadow-2xs" 
-                    : "bg-gray-50 border-gray-150 text-gray-600 hover:bg-gray-100 font-medium"
-                }`}
-              >
-                <span className="text-[11px]">Date & Time</span>
-                <span className="text-xs font-bold">3</span>
-              </button>
-
-              <button 
-                onClick={() => setActiveAiFilter(activeAiFilter === "metrics" ? "all" : "metrics")}
-                className={`p-2 rounded-lg flex items-center justify-between border cursor-pointer transition-all ${
-                  activeAiFilter === "metrics" 
-                    ? "bg-purple-50 border-purple-300 text-purple-700 font-bold shadow-2xs" 
-                    : "bg-gray-50 border-gray-150 text-gray-600 hover:bg-gray-100 font-medium"
-                }`}
-              >
-                <span className="text-[11px]">Metrics</span>
-                <span className="text-xs font-bold">1</span>
-              </button>
-
-              <button 
-                onClick={() => setActiveAiFilter(activeAiFilter === "tasks" ? "all" : "tasks")}
-                className={`p-2 rounded-lg flex items-center justify-between border cursor-pointer transition-all col-span-2 ${
-                  activeAiFilter === "tasks" 
-                    ? "bg-purple-50 border-purple-300 text-purple-700 font-bold shadow-2xs" 
-                    : "bg-gray-50 border-gray-150 text-gray-600 hover:bg-gray-100 font-medium"
-                }`}
-              >
-                <span className="text-[11px]">Tasks</span>
-                <span className="text-xs font-bold">1</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Sentiments */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-gray-700">
-              <span>SENTIMENTS</span>
-              <span className="text-[10px] text-gray-400">▲</span>
-            </div>
-            <div className="space-y-1 text-[11px] font-semibold">
-              <button 
-                onClick={() => setActiveSentimentFilter(activeSentimentFilter === "neutral" ? "all" : "neutral")}
-                className={`w-full flex items-center justify-between p-1.5 rounded-lg transition-colors cursor-pointer ${
-                  activeSentimentFilter === "neutral" ? "bg-pink-100 text-pink-800 font-bold" : "text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-pink-400"></span>
-                  Neutral
-                </span>
-                <span>60%</span>
-              </button>
-
-              <button 
-                onClick={() => setActiveSentimentFilter(activeSentimentFilter === "positive" ? "all" : "positive")}
-                className={`w-full flex items-center justify-between p-1.5 rounded-lg transition-colors cursor-pointer ${
-                  activeSentimentFilter === "positive" ? "bg-sky-100 text-sky-800 font-bold" : "text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-sky-400"></span>
-                  Positive
-                </span>
-                <span>30%</span>
-              </button>
-
-              <button 
-                onClick={() => setActiveSentimentFilter(activeSentimentFilter === "negative" ? "all" : "negative")}
-                className={`w-full flex items-center justify-between p-1.5 rounded-lg transition-colors cursor-pointer ${
-                  activeSentimentFilter === "negative" ? "bg-amber-100 text-amber-800 font-bold" : "text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                  Negative
-                </span>
-                <span>10%</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Speaker Talktime */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-gray-700">
-              <span>SPEAKER TALKTIME</span>
-              <span className="text-[10px] text-gray-400">▲</span>
-            </div>
-            <button 
-              onClick={() => setActiveSpeakerFilter(activeSpeakerFilter === "Speaker 1" ? null : "Speaker 1")}
-              className={`w-full border rounded-xl p-3 flex items-center justify-between text-xs cursor-pointer transition-all ${
-                activeSpeakerFilter === "Speaker 1" 
-                  ? "bg-emerald-100 border-emerald-300 font-bold shadow-2xs" 
-                  : "bg-emerald-50/60 border-emerald-100 hover:bg-emerald-100/50"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded-md bg-emerald-500 text-white font-bold text-[10px] flex items-center justify-center">S</span>
-                <div className="text-left">
-                  <span className="font-bold text-gray-800 block text-[11px]">Speaker 1</span>
-                  <span className="text-[10px] text-gray-400 font-medium">139 WPM</span>
-                </div>
-              </div>
-              <span className="text-xs font-bold text-emerald-600">100%</span>
-            </button>
-          </div>
-
-          {/* Topic Trackers */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-gray-700">
-              <span>TOPIC TRACKERS</span>
-              <button 
-                onClick={() => setIsAddingTopic(!isAddingTopic)}
-                className="text-[10px] text-purple-600 font-bold hover:underline cursor-pointer"
-              >
-                + Add
-              </button>
-            </div>
-
-            {isAddingTopic ? (
-              <div className="space-y-2 pt-1">
-                <input 
-                  type="text" 
-                  placeholder="e.g. # OBS, # Audio"
-                  value={newTopicText}
-                  onChange={(e) => setNewTopicText(e.target.value)}
-                  className="w-full text-xs border border-gray-300 rounded-lg p-1.5 outline-none focus:border-purple-400"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && newTopicText.trim()) {
-                      setCustomTopicTracker(newTopicText.trim());
-                      setNewTopicText("");
-                      setIsAddingTopic(false);
-                    }
-                  }}
-                />
-                <button 
-                  onClick={() => {
-                    if (newTopicText.trim()) {
-                      setCustomTopicTracker(newTopicText.trim());
-                      setNewTopicText("");
-                      setIsAddingTopic(false);
-                    }
-                  }}
-                  className="w-full bg-purple-600 text-white font-semibold py-1 rounded text-xs cursor-pointer"
-                >
-                  Save Tracker
-                </button>
-              </div>
-            ) : customTopicTracker ? (
-              <div className="flex items-center justify-between bg-purple-50 border border-purple-200 rounded-xl p-2.5 text-xs text-purple-800 font-bold select-none">
-                <span>#{customTopicTracker}</span>
-                <button 
-                  onClick={() => setCustomTopicTracker(null)} 
-                  className="text-purple-400 hover:text-purple-700 text-xs font-bold cursor-pointer"
-                >
-                  ✕
-                </button>
-              </div>
-            ) : (
-              <div className="py-4 text-center border border-dashed border-gray-200 rounded-xl text-xs text-gray-400 font-medium">
-                # No topic tracker
-              </div>
-            )}
-          </div>
         </div>
 
 
@@ -802,121 +627,46 @@ export default function DetailView({
           <div className="space-y-6 pt-2">
             <div className="space-y-3">
               <h3 className="text-sm font-bold text-gray-900">Notes</h3>
-              <h4 className="text-xs font-bold text-gray-800">Google Meet Recording Setup</h4>
-              
-              <ul className="space-y-2 text-xs text-gray-700 leading-relaxed list-disc pl-4">
-                <li>
-                  Create new scene in OBS named Google Meet calls{" "}
-                  <button 
-                    onClick={() => { setCurrentTime(0); setIsPlaying(true); }}
-                    className="text-[#6E2CF4] hover:underline font-semibold cursor-pointer"
-                  >
-                    (00:00)
-                  </button>
-                  <ul className="list-circle pl-5 mt-1 space-y-1 text-gray-600">
-                    <li>Select Window Capture source</li>
-                    <li>Choose Google Meet window</li>
-                  </ul>
-                </li>
-                <li>
-                  Configure audio sources in OBS settings{" "}
-                  <button 
-                    onClick={() => { setCurrentTime(15); setIsPlaying(true); }}
-                    className="text-[#6E2CF4] hover:underline font-semibold cursor-pointer"
-                  >
-                    (00:15)
-                  </button>
-                  <ul className="list-circle pl-5 mt-1 space-y-1 text-gray-600">
-                    <li>Set Desktop Audio to default device</li>
-                    <li>Add Audio Input Capture for microphone</li>
-                  </ul>
-                </li>
-              </ul>
-
-              <h4 className="text-xs font-bold text-gray-800 pt-2">Recording Process</h4>
-              <ul className="space-y-2 text-xs text-gray-700 leading-relaxed list-disc pl-4">
-                <li>
-                  Start recording in OBS to capture video and audio{" "}
-                  <button 
-                    onClick={() => { setCurrentTime(45); setIsPlaying(true); }}
-                    className="text-[#6E2CF4] hover:underline font-semibold cursor-pointer"
-                  >
-                    (00:45)
-                  </button>
-                </li>
-                <li>
-                  Stop recording and locate file via File &gt; Show Recordings{" "}
-                  <button 
-                    onClick={() => { setCurrentTime(114); setIsPlaying(true); }}
-                    className="text-[#6E2CF4] hover:underline font-semibold cursor-pointer"
-                  >
-                    (01:54)
-                  </button>
-                </li>
-              </ul>
+              {meetingDetail.summary ? (
+                <>
+                  <p className="text-xs text-gray-700 leading-relaxed mb-4">
+                    {meetingDetail.summary.overview_text}
+                  </p>
+                  
+                  {meetingDetail.summary.key_topics && meetingDetail.summary.key_topics.length > 0 && (
+                    <>
+                      <h4 className="text-xs font-bold text-gray-800 pt-2">Key Topics</h4>
+                      <ul className="space-y-2 text-xs text-gray-700 leading-relaxed list-disc pl-4">
+                        {meetingDetail.summary.key_topics.map((topic, idx) => (
+                          <li key={idx}>{topic}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </>
+              ) : (
+                <p className="text-xs text-gray-500 italic">No notes available for this meeting.</p>
+              )}
             </div>
 
             {/* ── ACTION ITEMS SECTION matching Image 3 ── */}
             <div className="space-y-3 pt-4 border-t border-gray-100">
               <h3 className="text-sm font-bold text-gray-900">Action items</h3>
-              <h4 className="text-xs font-semibold text-gray-500">Unassigned</h4>
               
-              <ul className="space-y-2 text-xs text-gray-700 leading-relaxed list-disc pl-4">
-                <li>
-                  Create new scene "Google Meet calls"{" "}
-                  <button 
-                    onClick={() => { setCurrentTime(15); setIsPlaying(true); }}
-                    className="text-[#6E2CF4] hover:underline font-semibold cursor-pointer"
-                  >
-                    (00:15)
-                  </button>
-                </li>
-                <li>
-                  Add Google Meet window as Window Capture source{" "}
-                  <button 
-                    onClick={() => { setCurrentTime(35); setIsPlaying(true); }}
-                    className="text-[#6E2CF4] hover:underline font-semibold cursor-pointer"
-                  >
-                    (00:35)
-                  </button>
-                </li>
-                <li>
-                  Configure Desktop Audio in OBS{" "}
-                  <button 
-                    onClick={() => { setCurrentTime(55); setIsPlaying(true); }}
-                    className="text-[#6E2CF4] hover:underline font-semibold cursor-pointer"
-                  >
-                    (00:55)
-                  </button>
-                </li>
-                <li>
-                  Add microphone as Audio Input Capture source{" "}
-                  <button 
-                    onClick={() => { setCurrentTime(90); setIsPlaying(true); }}
-                    className="text-[#6E2CF4] hover:underline font-semibold cursor-pointer"
-                  >
-                    (01:30)
-                  </button>
-                </li>
-                <li>
-                  Start recording Google Meet call{" "}
-                  <button 
-                    onClick={() => { setCurrentTime(100); setIsPlaying(true); }}
-                    className="text-[#6E2CF4] hover:underline font-semibold cursor-pointer"
-                  >
-                    (01:40)
-                  </button>
-                </li>
-                <li>
-                  Stop recording and locate video file{" "}
-                  <button 
-                    onClick={() => { setCurrentTime(114); setIsPlaying(true); }}
-                    className="text-[#6E2CF4] hover:underline font-semibold cursor-pointer"
-                  >
-                    (01:54)
-                  </button>
-                </li>
-              </ul>
+              {meetingDetail.action_items && meetingDetail.action_items.length > 0 ? (
+                <ul className="space-y-2 text-xs text-gray-700 leading-relaxed list-disc pl-4">
+                  {meetingDetail.action_items.map((item, idx) => (
+                    <li key={idx} className={item.is_completed ? "line-through text-gray-400" : ""}>
+                      {item.text}
+                      {item.assignee && (
+                        <span className="ml-1 text-[#6E2CF4] font-semibold">({item.assignee})</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-xs text-gray-500 italic">No action items available.</p>
+              )}
             </div>
 
             {/* ── FEEDBACK & CONTINUE CARDS matching Image 3 ── */}
@@ -936,7 +686,7 @@ export default function DetailView({
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 </h4>
                 <p className="text-xs text-gray-600 leading-relaxed">
-                  The purpose of the meeting is to set up recording for Google Meet calls using OBS, covering scene setup and audio configuration.
+                  {meetingDetail.summary ? meetingDetail.summary.overview_text.substring(0, 150) + "..." : "Interact with the AI to get more insights from this meeting."}
                 </p>
                 <div className="flex flex-wrap gap-2 pt-1">
                   <button 
@@ -1074,13 +824,14 @@ export default function DetailView({
                 </form>
               </div>
             ) : (
-              <div className="p-4 flex-1 flex flex-col overflow-hidden">
+              <div className="p-4 flex-1 flex flex-col min-h-0 overflow-hidden">
                 <Transcript 
                   segments={meetingDetail.transcript_segments}
                   currentTime={currentTime}
                   isPlaying={isPlaying}
                   onSegmentClick={(t) => { setCurrentTime(t); setIsPlaying(true); }}
                   onUpdateSegment={onUpdateTranscriptSegment}
+                  externalSearchQuery={smartSearchQuery}
                 />
               </div>
             )}

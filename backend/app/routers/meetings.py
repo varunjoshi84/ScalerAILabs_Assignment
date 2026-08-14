@@ -18,8 +18,10 @@ def parse_raw_transcript(raw_text: str) -> List[dict]:
     # Matches formats like:
     # Speaker Name (01:23): Text...
     # Speaker Name [1:23:45] Text...
+    # [00:00] Speaker Name: Text...
+    # (01:23) Speaker Name: Text...
     # Speaker Name: Text...
-    pattern_with_time = re.compile(r"^([^:(]+?)\s*[\(\[]?(\d{1,2}:\d{2}(?::\d{2})?)[\)\]]?\s*:\s*(.*)$")
+    pattern_with_time = re.compile(r"^(?:[\(\[]?(\d{1,2}:\d{2}(?::\d{2})?)[\)\]]?\s*)?([^:(]+?)\s*(?:[\(\[]?(\d{1,2}:\d{2}(?::\d{2})?)[\)\]]?\s*)?:\s*(.*)$")
     pattern_simple = re.compile(r"^([^:]+?)\s*:\s*(.*)$")
     
     current_time = 0
@@ -31,9 +33,13 @@ def parse_raw_transcript(raw_text: str) -> List[dict]:
         
         match = pattern_with_time.match(line)
         if match:
-            speaker = match.group(1).strip()
-            time_str = match.group(2).strip()
-            text = match.group(3).strip()
+            speaker = match.group(2).strip()
+            time_str = match.group(1) or match.group(3)
+            if time_str:
+                time_str = time_str.strip()
+            else:
+                time_str = "00:00"
+            text = match.group(4).strip()
             
             # Parse timestamp into seconds
             parts = list(map(int, time_str.split(':')))

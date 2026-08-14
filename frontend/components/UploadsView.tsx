@@ -312,70 +312,7 @@ Alice Smith (01:40): I will prepare the product summary and export final transcr
             </div>
           </div>
 
-          {/* Uploaded Files Section matching Image 2, 3, 4 */}
-          {uploadedFiles.length > 0 && (
-            <div className="space-y-3 pt-2">
-              <h4 className="text-[13px] font-bold text-gray-900 select-none">Recent Transcript Uploads</h4>
-
-              {uploadedFiles.map((file) => (
-                <div 
-                  key={file.id}
-                  className="bg-[#F8FAFC] border border-gray-200/80 rounded-xl p-4 flex items-center justify-between hover:border-purple-200 transition-all shadow-2xs"
-                >
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    {/* Format Badge */}
-                    <div className="w-10 h-10 rounded-lg bg-[#38BDF8] flex items-center justify-center text-white font-extrabold text-[11px] shrink-0 shadow-2xs uppercase">
-                      {file.format}
-                    </div>
-
-                    <div className="min-w-0">
-                      <h4 className="text-[13px] font-semibold text-gray-900 truncate">
-                        {file.name}
-                      </h4>
-                      <span className="text-[11px] text-gray-400 font-medium block mt-0.5">
-                        {file.date} {file.duration ? `· ${file.duration}` : ""} · {file.size}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 shrink-0 ml-4 select-none">
-                    {file.status === "processing" ? (
-                      <div className="bg-[#FEF3C7] text-[#D97706] rounded-full text-[11.5px] px-3 py-1 font-semibold flex items-center gap-1.5 animate-pulse">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span>Processing transcript</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <button 
-                          onClick={() => {
-                            if (file.meetingId && onSelectMeeting) {
-                              onSelectMeeting(file.meetingId);
-                            } else {
-                              onTriggerToast("Opening transcript detail view...", "success");
-                            }
-                          }}
-                          className="bg-purple-50 border border-purple-200 hover:bg-purple-100 text-[#6E2CF4] font-semibold py-1.5 px-3 rounded-lg text-xs flex items-center gap-1.5 cursor-pointer transition-colors"
-                        >
-                          <Sparkles className="w-3.5 h-3.5 text-[#6E2CF4]" />
-                          <span>View Transcript & AI Summary</span>
-                        </button>
-
-                        <button 
-                          onClick={() => setSelectedFileForModal(file)}
-                          className="border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-1.5 px-3 rounded-lg text-xs flex items-center gap-1 cursor-pointer transition-colors"
-                        >
-                          <span>Details</span>
-                          <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-        </div>
+          {/* End of Main Content */}        </div>
       </div>
 
       {/* Details Modal Overlay matching Image 5 */}
