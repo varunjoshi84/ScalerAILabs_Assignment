@@ -59,6 +59,24 @@ export default function Home() {
   // 3. Media playback sync timers
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+
+  // Playback mock timer (since media files are seeded dummies)
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPlaying && meetingDetail) {
+      interval = setInterval(() => {
+        setCurrentTime((prev) => {
+          if (prev >= meetingDetail.duration) {
+            setIsPlaying(false);
+            return meetingDetail.duration;
+          }
+          return prev + 1;
+        });
+      }, 1000 / playbackRate);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying, meetingDetail, playbackRate]);
   const [detailTab, setDetailTab] = useState<"summary" | "actions">("summary");
 
   // 4. Modals & Notifications
@@ -460,6 +478,8 @@ export default function Home() {
               onDeleteActionItem={handleDeleteActionItem}
               onUpdateTranscriptSegment={handleUpdateTranscriptSegment}
               API_BASE_URL={API_BASE_URL}
+              playbackRate={playbackRate}
+              setPlaybackRate={setPlaybackRate}
             />
           ) : (
             <div className="flex-1 flex items-center justify-center bg-white">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { 
   Search, 
   Video, 
@@ -52,19 +52,35 @@ export default function UploadsView({
   // File input ref for real file selection
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Simulated uploads list (initialized with sample from Image 2/3/4)
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
-    {
-      id: "up-1",
-      name: "Q3_Product_Strategy_Transcript.txt",
-      size: "1.4 MB",
-      date: "Aug 14",
-      duration: "15 min",
-      format: "TXT",
-      status: "completed",
-      meetingId: 1
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("fireflies_mock_uploads");
+    if (saved) {
+      setUploadedFiles(JSON.parse(saved));
+    } else {
+      setUploadedFiles([
+        {
+          id: "up-1",
+          name: "Q3_Product_Strategy_Transcript.txt",
+          size: "1.4 MB",
+          date: "Aug 14",
+          duration: "15 min",
+          format: "TXT",
+          status: "completed",
+          meetingId: 1
+        }
+      ]);
     }
-  ]);
+  }, []);
+
+  // Save to localStorage when changed
+  useEffect(() => {
+    if (uploadedFiles.length > 0) {
+      localStorage.setItem("fireflies_mock_uploads", JSON.stringify(uploadedFiles));
+    }
+  }, [uploadedFiles]);
 
   // Handle actual transcript or file upload
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

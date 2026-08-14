@@ -52,6 +52,8 @@ interface DetailViewProps {
   onDeleteActionItem: (id: number) => Promise<void>;
   onUpdateTranscriptSegment: (segmentId: number, isHighlighted: boolean, comment: string | null) => Promise<void>;
   API_BASE_URL: string;
+  playbackRate: number;
+  setPlaybackRate: (rate: number) => void;
 }
 
 export default function DetailView({
@@ -71,6 +73,8 @@ export default function DetailView({
   onDeleteActionItem,
   onUpdateTranscriptSegment,
   API_BASE_URL,
+  playbackRate,
+  setPlaybackRate,
 }: DetailViewProps) {
 
   // Right sidebar tab state: AskFred vs Transcript
@@ -1099,7 +1103,12 @@ export default function DetailView({
 
         {/* Center Media Player Buttons */}
         <div className="flex items-center gap-4">
-          <span className="text-xs font-bold text-gray-500 cursor-pointer hover:text-gray-800">1x</span>
+          <button 
+            onClick={() => setPlaybackRate(playbackRate === 1 ? 1.25 : playbackRate === 1.25 ? 1.5 : playbackRate === 1.5 ? 2 : 1)}
+            className="text-xs font-bold text-gray-500 cursor-pointer hover:text-gray-800 focus:outline-none"
+          >
+            {playbackRate}x
+          </button>
           
           <button 
             onClick={() => setCurrentTime(Math.max(0, currentTime - 5))}
