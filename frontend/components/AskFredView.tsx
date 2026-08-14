@@ -134,31 +134,31 @@ export default function AskFredView({ meetings, onSelectMeeting, onTriggerToast 
   return (
     <div className="flex-1 flex flex-col h-full bg-gradient-to-b from-[#FAF5FF]/50 via-white to-gray-50/30 overflow-hidden font-sans select-none">
       {/* Top Navigation Bar */}
-      <div className="h-14 border-b border-purple-100/60 bg-white/80 backdrop-blur-md px-6 flex items-center justify-between shrink-0 shadow-2xs">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#9333EA] to-[#C084FC] flex items-center justify-center text-white shadow-sm">
-            <Sparkles className="w-4 h-4" />
+      <div className="min-h-[56px] py-2 md:py-0 md:h-14 border-b border-purple-100/60 bg-white/80 backdrop-blur-md px-3 md:px-6 flex items-center justify-between gap-2 shrink-0 shadow-2xs relative z-30">
+        <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+          <div className="w-7 h-7 md:w-8 md:h-8 shrink-0 rounded-xl bg-gradient-to-tr from-[#9333EA] to-[#C084FC] flex items-center justify-center text-white shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" />
           </div>
-          <div>
-            <h1 className="text-base font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
-              AskFred AI Assistant
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-200">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-sm md:text-base font-extrabold text-gray-900 tracking-tight flex items-center gap-1.5 flex-wrap sm:flex-nowrap">
+              <span className="truncate">AskFred AI</span>
+              <span className="text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-200 shrink-0">
                 GPT-4o Powered
               </span>
             </h1>
-            <p className="text-[11px] text-gray-500 font-medium">Cross-meeting intelligence & instant answers</p>
+            <p className="hidden md:block text-[11px] text-gray-500 font-medium truncate">Cross-meeting intelligence & instant answers</p>
           </div>
         </div>
 
         {/* Scope Selector Dropdown */}
-        <div className="relative">
+        <div className="relative shrink-0">
           <button
             onClick={() => setIsScopeDropdownOpen(!isScopeDropdownOpen)}
-            className="flex items-center gap-2 bg-[#F4F4F6] hover:bg-purple-50 text-gray-700 hover:text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-xl border border-gray-200/80 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 md:gap-2 bg-[#F4F4F6] hover:bg-purple-50 text-gray-700 hover:text-purple-700 text-[10px] md:text-xs font-semibold px-2 md:px-3 py-1.5 rounded-xl border border-gray-200/80 transition-colors cursor-pointer max-w-[120px] md:max-w-none"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>{getScopeLabel()}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500 shrink-0"></span>
+            <span className="truncate">{getScopeLabel()}</span>
+            <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
           </button>
 
           {isScopeDropdownOpen && (
@@ -234,8 +234,8 @@ export default function AskFredView({ meetings, onSelectMeeting, onTriggerToast 
         </div>
       </div>
 
-      {/* Main Conversation Canvas */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 max-w-4xl w-full mx-auto">
+       {/* Main Conversation Canvas */}
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-4 md:pb-6 space-y-6 max-w-4xl w-full mx-auto">
         {/* Hero Banner when few messages */}
         {chatMessages.length === 1 && (
           <div className="text-center py-6 space-y-4">
@@ -244,7 +244,7 @@ export default function AskFredView({ meetings, onSelectMeeting, onTriggerToast 
             </div>
             <div>
               <h2 className="text-xl font-black text-gray-900 tracking-tight">Ask Fred Anything</h2>
-              <p className="text-xs text-gray-500 font-medium max-w-md mx-auto mt-1">
+              <p className="text-xs text-gray-500 font-medium max-w-md mx-auto mt-1 px-4">
                 Search transcripts, extract action items, generate executive briefs, or ask questions across all your meetings.
               </p>
             </div>
@@ -292,7 +292,7 @@ export default function AskFredView({ meetings, onSelectMeeting, onTriggerToast 
 
               <div className={`max-w-2xl space-y-2 ${msg.sender === "user" ? "items-end" : "items-start"}`}>
                 <div
-                  className={`p-4 rounded-2xl text-xs leading-relaxed shadow-xs ${
+                  className={`p-3 md:p-4 rounded-2xl text-[13px] md:text-xs leading-relaxed shadow-xs ${
                     msg.sender === "user"
                       ? "bg-[#6E2CF4] text-white font-medium rounded-tr-xs"
                       : "bg-white border border-gray-200/80 text-gray-800 rounded-tl-xs whitespace-pre-wrap"
@@ -310,8 +310,8 @@ export default function AskFredView({ meetings, onSelectMeeting, onTriggerToast 
                       className="inline-flex items-center gap-1.5 text-[11px] font-bold text-purple-600 hover:text-purple-800 hover:underline cursor-pointer bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-100"
                     >
                       <Video className="w-3 h-3" />
-                      <span>{msg.sourceMeetingTitle}</span>
-                      <ExternalLink className="w-2.5 h-2.5" />
+                      <span className="truncate max-w-[120px] md:max-w-[200px]">{msg.sourceMeetingTitle}</span>
+                      <ExternalLink className="w-2.5 h-2.5 shrink-0" />
                     </button>
                   </div>
                 )}
@@ -341,7 +341,7 @@ export default function AskFredView({ meetings, onSelectMeeting, onTriggerToast 
       </div>
 
       {/* Bottom Fixed Toolbar Input Bar */}
-      <div className="p-4 bg-white/90 border-t border-purple-100/60 backdrop-blur-md shrink-0">
+      <div className="p-3 md:p-4 bg-white/90 border-t border-purple-100/60 backdrop-blur-md shrink-0">
         <div className="max-w-4xl mx-auto space-y-2">
           <form
             onSubmit={(e) => {
@@ -352,10 +352,10 @@ export default function AskFredView({ meetings, onSelectMeeting, onTriggerToast 
           >
             <input
               type="text"
-              placeholder="Ask anything across your meetings... (Type / to run AI Skills)"
+              placeholder="Ask anything across your meetings..."
               value={inputQuery}
               onChange={(e) => setInputQuery(e.target.value)}
-              className="flex-1 text-xs bg-transparent px-4 py-2.5 outline-none text-gray-800 placeholder-gray-400 font-medium"
+              className="flex-1 text-xs md:text-sm bg-transparent px-3 md:px-4 py-2.5 outline-none text-gray-800 placeholder-gray-400 font-medium"
             />
 
             <button
@@ -371,9 +371,9 @@ export default function AskFredView({ meetings, onSelectMeeting, onTriggerToast 
             </button>
           </form>
 
-          <div className="flex items-center justify-between text-[10.5px] text-gray-400 font-medium px-2">
-            <span>💡 Pro-tip: Try asking &ldquo;What action items were assigned to Varun?&rdquo;</span>
-            <span>AskFred v2.4 • Powered by Gemini AI</span>
+          <div className="flex items-center justify-between text-[9px] md:text-[10.5px] text-gray-400 font-medium px-1 md:px-2">
+            <span className="truncate pr-2">💡 Pro-tip: Try asking &ldquo;What action items were assigned to Varun?&rdquo;</span>
+            <span className="shrink-0">AskFred v2.4 • Gemini AI</span>
           </div>
         </div>
       </div>

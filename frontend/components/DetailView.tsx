@@ -98,6 +98,7 @@ export default function DetailView({
   const [summaryStyle, setSummaryStyle] = useState<"general" | "executive" | "technical" | "action_centric">("general");
   const [isSummaryPresetOpen, setIsSummaryPresetOpen] = useState(false);
   const [isRefineModalOpen, setIsRefineModalOpen] = useState(false);
+  const [mobileTab, setMobileTab] = useState<"video" | "context" | "askfred">("video");
   const [refinePrompt, setRefinePrompt] = useState("");
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
   const [currentSummaryText, setCurrentSummaryText] = useState(meetingDetail.summary?.overview_text || "The purpose of the meeting is to set up recording for Google Meet calls using OBS, covering scene setup and audio configuration.");
@@ -333,10 +334,34 @@ export default function DetailView({
       </header>
 
       {/* 2. Main 3-Column Container */}
-      <div className="flex-1 flex overflow-hidden bg-[#FAF9F6]">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden bg-[#FAF9F6]">
+
+        {/* Mobile Tab Selector */}
+        <div className="lg:hidden flex border-b border-gray-200 bg-white shrink-0 shadow-xs z-10">
+          <button 
+            onClick={() => setMobileTab("video")}
+            className={`flex-1 py-3 text-[13px] font-bold border-b-2 transition-all ${mobileTab === "video" ? "border-purple-600 text-purple-700 bg-purple-50/50" : "border-transparent text-gray-500"}`}
+          >
+            Video & Notes
+          </button>
+          <button 
+            onClick={() => setMobileTab("askfred")}
+            className={`flex-1 py-3 text-[13px] font-bold border-b-2 transition-all ${mobileTab === "askfred" ? "border-purple-600 text-purple-700 bg-purple-50/50" : "border-transparent text-gray-500"}`}
+          >
+            AskFred / Transcript
+          </button>
+          <button 
+            onClick={() => setMobileTab("context")}
+            className={`flex-1 py-3 text-[13px] font-bold border-b-2 transition-all ${mobileTab === "context" ? "border-purple-600 text-purple-700 bg-purple-50/50" : "border-transparent text-gray-500"}`}
+          >
+            Context
+          </button>
+        </div>
 
         {/* ── COLUMN 1: Left Analytics & Smart Search Panel (Image 2 & 3) ── */}
-        <div className="w-60 border-r border-gray-200 bg-white flex flex-col shrink-0 overflow-y-auto p-4 space-y-6 hidden lg:flex select-none scrollbar-thin">
+        <div className={`border-r border-gray-200 bg-white flex-col shrink-0 overflow-y-auto p-4 space-y-6 select-none scrollbar-thin
+          ${mobileTab === "context" ? "flex flex-1 w-full" : "hidden lg:flex w-60"}
+        `}>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Smart Search</h3>
@@ -370,7 +395,9 @@ export default function DetailView({
 
 
         {/* ── COLUMN 2: Center Notes & AI Summary Panel (Image 2 & 3) ── */}
-        <div className="flex-1 flex flex-col overflow-y-auto bg-white p-6 space-y-6 scrollbar-thin">
+        <div className={`flex-col overflow-y-auto bg-white p-4 md:p-6 space-y-6 scrollbar-thin
+          ${mobileTab === "video" ? "flex flex-1 w-full" : "hidden lg:flex lg:flex-1"}
+        `}>
           
           {/* Notes / AI Skills Switcher */}
           <div className="flex items-center justify-between border-b border-gray-100 pb-3">
@@ -717,7 +744,9 @@ export default function DetailView({
 
 
         {/* ── COLUMN 3: Right AskFred & Transcript Panel (Image 2 & 3) ── */}
-        <div className="w-80 border-l border-gray-200 bg-white flex flex-col shrink-0 overflow-hidden select-none">
+        <div className={`border-l border-gray-200 bg-white flex-col shrink-0 overflow-hidden select-none
+          ${mobileTab === "askfred" ? "flex flex-1 w-full" : "hidden xl:flex xl:w-[320px]"}
+        `}>
           
           {/* Top Panel Tab Switcher */}
           <div className="flex border-b border-gray-100 px-4 pt-3 bg-white shrink-0">

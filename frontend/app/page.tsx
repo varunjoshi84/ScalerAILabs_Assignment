@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Sidebar from "../components/Sidebar";
+import { FirefliesLogoMark } from "../components/FirefliesLogo";
+import { Search, Video } from "lucide-react";
 import LoginView from "../components/LoginView";
 import DashboardView from "../components/DashboardView";
 import DetailView from "../components/DetailView";
@@ -391,13 +393,84 @@ export default function Home() {
     setIsSidebarCollapsed(true);
   };
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isTrialBannerVisible, setIsTrialBannerVisible] = useState(true);
+
   // AUTH GUARD
   if (!isLoggedIn) {
     return <LoginView onLoginSuccess={() => setIsLoggedIn(true)} triggerToast={triggerToast} />;
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-gray-50 text-gray-800 select-none">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-gray-50 text-gray-800 select-none">
+      
+      {/* Free Trial Banner at Very Top */}
+      {isTrialBannerVisible && (
+        <div className="bg-[#F4F0FF] py-2 px-8 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-[12.5px] text-gray-700 shrink-0 relative select-none border-b border-purple-100/50 text-center z-50 hidden md:flex">
+          <span>You are eligible for 7 days business plan free trial.</span>
+          <button 
+            onClick={() => triggerToast("Free trial activation coming soon!", "success")}
+            className="text-[#6E2CF4] font-medium hover:underline cursor-pointer whitespace-nowrap"
+          >
+            Start free trial →
+          </button>
+          <button 
+            onClick={() => setIsTrialBannerVisible(false)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 flex items-center justify-center text-gray-400 hover:text-gray-600 text-lg leading-none cursor-pointer"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* Main Body Layout */}
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+
+      
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center justify-between p-3 bg-white border-b border-gray-200 z-40 shrink-0">
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="p-1 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <div className="cursor-pointer" onClick={handleNavigateHome}>
+            <FirefliesLogoMark className="w-8 h-8 rounded-xl" />
+          </div>
+        </div>
+
+        {/* Right side actions for Mobile */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="relative">
+            <Search className="absolute left-2 top-1.5 w-3.5 h-3.5 text-gray-400" />
+            <input 
+              type="text" 
+              placeholder="Search..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-20 sm:w-32 text-xs bg-gray-50 border border-gray-200 rounded-lg py-1.5 pl-7 pr-2 outline-none focus:border-purple-300 transition-colors"
+            />
+          </div>
+          <button 
+            onClick={() => triggerToast("Premium plans upgrade coming soon!", "success")}
+            className="px-2.5 py-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors cursor-pointer"
+          >
+            Upgrade
+          </button>
+          <button 
+            onClick={() => setIsCreateOpen(true)}
+            className="px-2.5 py-1.5 flex items-center gap-1.5 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors cursor-pointer text-xs font-bold"
+          >
+            <Video className="w-4 h-4" />
+            <span className="hidden sm:inline">Capture</span>
+          </button>
+        </div>
+      </div>
+
       <Sidebar 
         currentView={currentView} 
         onNavigateHome={handleNavigateHome} 
@@ -408,6 +481,8 @@ export default function Home() {
         onComingSoon={(feature) => triggerToast(`${feature} feature coming soon!`, "success")}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        isMobileOpen={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
       <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
@@ -491,6 +566,7 @@ export default function Home() {
           )
         )}
       </div>
+    </div>
 
       {/* Modals & Portal Overlays */}
       {isCreateOpen && (

@@ -267,22 +267,12 @@ export default function MeetingsView({
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-white font-sans">
-      {/* Free trial banner */}
-      <div className="bg-[#F4F0FF] border-b border-purple-100/50 px-4 py-2 flex items-center justify-center gap-1.5 text-[12.5px] text-gray-700 shrink-0">
-        <span>You are eligible for 7 days business plan free trial.</span>
-        <button 
-          onClick={() => onTriggerToast("Free trial activation coming soon!", "success")}
-          className="text-[#6E2CF4] font-semibold hover:underline"
-        >
-          Start free trial →
-        </button>
-      </div>
 
       {/* Top header */}
       <header className="px-6 py-3 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white">
         <h1 className="text-[15px] font-semibold text-gray-800">Meetings</h1>
 
-        <div className="max-w-[420px] w-full relative flex items-center">
+        <div className="max-w-[420px] w-full relative hidden md:flex items-center">
           <Search className="absolute left-3.5 w-4 h-4 text-gray-400" />
           <input
             type="text"
@@ -296,7 +286,7 @@ export default function MeetingsView({
           </span>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="hidden md:flex items-center gap-2.5">
           <button 
             onClick={() => onTriggerToast("Premium plans upgrade coming soon!", "success")}
             className="bg-[#ECFDF5] hover:bg-[#D1FAE5] text-[#059669] border border-emerald-200/60 font-semibold py-1.5 px-3.5 rounded-lg text-xs"
@@ -340,7 +330,7 @@ export default function MeetingsView({
       <div className="flex-1 flex overflow-hidden">
 
         {/* LEFT: Meetings sub-sidebar */}
-        <div className="w-56 border-r border-gray-100 flex flex-col bg-white py-4 shrink-0">
+        <div className="hidden md:flex w-56 border-r border-gray-100 flex-col bg-white py-4 shrink-0">
           <div className="px-3 mb-5">
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
@@ -413,8 +403,8 @@ export default function MeetingsView({
         {/* CENTER: Meetings list */}
         <div className="flex-1 flex flex-col bg-white overflow-hidden">
           {/* Sub-header */}
-          <div className="px-5 py-2.5 border-b border-gray-100 flex items-center justify-between shrink-0 relative">
-            <div className="flex items-center gap-1.5">
+          <div className="px-3 md:px-5 py-2.5 border-b border-gray-100 flex items-center justify-between shrink-0 relative overflow-visible">
+            <div className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar pb-1 md:pb-0 scroll-smooth whitespace-nowrap flex-1">
               {meetingsSubTab === "my" && (
                 <>
                   <button
@@ -439,7 +429,9 @@ export default function MeetingsView({
                   </button>
                 </>
               )}
+            </div>
 
+            <div className="flex items-center gap-2 shrink-0 ml-2">
               <div className="relative">
                 <button
                   onClick={() => setIsFiltersOpen(!isFiltersOpen)}
@@ -455,7 +447,7 @@ export default function MeetingsView({
 
                 {/* Filter dropdown panel */}
                 {isFiltersOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 flex min-w-[560px] animate-in fade-in duration-150 relative">
+                  <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 flex flex-col md:flex-row w-[300px] sm:w-[340px] md:w-auto md:min-w-[560px] max-h-[60vh] md:max-h-none overflow-y-auto md:overflow-visible animate-in fade-in duration-150">
                     {/* Close button */}
                     <button
                       onClick={() => setIsFiltersOpen(false)}
@@ -466,7 +458,7 @@ export default function MeetingsView({
                     </button>
 
                 {/* Filter categories sidebar */}
-                <div className="w-44 border-r border-gray-100 p-2.5 space-y-0.5 shrink-0 bg-gray-50/40 rounded-l-xl select-none">
+                <div className="w-full md:w-44 border-b md:border-b-0 md:border-r border-gray-100 p-2.5 space-y-0.5 shrink-0 bg-gray-50/40 md:rounded-l-xl select-none">
                   {(["Hosted by", "Participants", "Date Range", "Duration", "Captured From", "Privacy"] as const).map((cat) => (
                     <button 
                       key={cat}
@@ -777,7 +769,7 @@ export default function MeetingsView({
         </div>
 
         {/* RIGHT: Ask Fred panel — wider matching Image 2 */}
-        <div className="w-[380px] border-l border-gray-100 flex flex-col bg-white shrink-0">
+        <div className="hidden lg:flex w-[380px] border-l border-gray-100 flex-col bg-white shrink-0">
           {/* Header */}
           <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-2">

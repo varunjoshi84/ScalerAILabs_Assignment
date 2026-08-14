@@ -32,6 +32,8 @@ interface SidebarProps {
   onComingSoon: (featureName: string) => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
+  isMobileOpen?: boolean;
+  onCloseMobile?: () => void;
 }
 
 export default function Sidebar({ 
@@ -42,10 +44,15 @@ export default function Sidebar({
   onNavigateAskFred,
   onLogout, 
   onComingSoon,
-  isCollapsed,
-  onToggleCollapse
+  isCollapsed: isCollapsedProp,
+  onToggleCollapse,
+  isMobileOpen = false,
+  onCloseMobile
 }: SidebarProps) {
   const [isInviteDismissed, setIsInviteDismissed] = useState(false);
+  
+  // On mobile, the sidebar should always be expanded (full width)
+  const isCollapsed = isCollapsedProp && !isMobileOpen;
 
   // AskFred Cute Robot Head Icon matching real Fireflies UI
   const AskFredRobotIcon = ({ className }: { className?: string }) => (
@@ -69,11 +76,11 @@ export default function Sidebar({
   }
 
   const topItems: MenuItem[] = [
-    { id: "home", label: "Home", icon: Home, active: currentView === "library", onClick: onNavigateHome },
-    { id: "askfred", label: "AskFred", icon: AskFredRobotIcon, active: currentView === "askfred", onClick: onNavigateAskFred, shortcut: "⌘J" },
-    { id: "meetings", label: "Meetings", icon: Video, active: currentView === "meetings" || currentView === "detail", onClick: onNavigateMeetings },
+    { id: "home", label: "Home", icon: Home, active: currentView === "library", onClick: () => { onNavigateHome(); onCloseMobile?.(); } },
+    { id: "askfred", label: "AskFred", icon: AskFredRobotIcon, active: currentView === "askfred", onClick: () => { onNavigateAskFred?.(); onCloseMobile?.(); }, shortcut: "⌘J" },
+    { id: "meetings", label: "Meetings", icon: Video, active: currentView === "meetings" || currentView === "detail", onClick: () => { onNavigateMeetings(); onCloseMobile?.(); } },
     { id: "status", label: "Meeting Status", icon: Activity, active: false },
-    { id: "uploads", label: "Uploads", icon: Upload, active: currentView === "uploads", onClick: onNavigateUploads },
+    { id: "uploads", label: "Uploads", icon: Upload, active: currentView === "uploads", onClick: () => { onNavigateUploads(); onCloseMobile?.(); } },
   ];
 
   const middleItems: MenuItem[] = [
@@ -98,86 +105,81 @@ export default function Sidebar({
       <div key={item.id}>
         <button
           onClick={item.onClick || (() => onComingSoon(item.label))}
-          title={isCollapsed ? item.label : undefined}
-          className={`w-full flex items-center rounded-xl transition-all cursor-pointer group relative ${
-            isCollapsed 
-              ? "justify-center p-2.5 my-0.5" 
-              : "gap-3 px-3 py-2 my-[1px]"
-          } ${
+          className={`w-full flex items-center justify-between py-2 px-3 rounded-xl transition-all cursor-pointer ${
             isActive 
-              ? "bg-[#F3E8FF] text-[#7E22CE] font-semibold" 
-              : "text-[#475569] hover:bg-gray-50 hover:text-gray-900 font-medium"
+              ? "bg-[#F3F0FF] text-[#6E2CF4] font-semibold" 
+              : "text-gray-600 hover:bg-gray-100/80 font-medium"
           }`}
         >
-          <Icon 
-            className={`w-4 h-4 shrink-0 transition-colors ${
-              isActive 
-                ? "text-[#7E22CE]" 
-                : item.id === "askfred" 
-                  ? "text-[#8B5CF6]" 
-                  : "text-[#64748B] group-hover:text-gray-800"
-            }`} 
-          />
-          
-          {!isCollapsed && (
-            <span className="text-[13.5px] flex-1 text-left tracking-tight">
-              {item.label}
-            </span>
-          )}
-          
-          {!isCollapsed && item.shortcut && (
-            <span className="text-[10px] text-gray-400 font-medium tracking-wide">{item.shortcut}</span>
-          )}
-          
-          {!isCollapsed && item.badge && (
-            <span className="text-[9px] font-bold px-1.5 py-[2px] rounded-md bg-[#10B981] text-white leading-none">
-              {item.badge}
-            </span>
-          )}
-
-          {isCollapsed && item.badge && (
-            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#10B981]"></span>
+          <div className="flex items-center gap-3">
+            <Icon className={`w-[18px] h-[18px] ${isActive ? "text-[#6E2CF4]" : "text-gray-400"}`} />
+            {(!isCollapsed || isMobileOpen) && <span className="text-[13.5px] tracking-tight">{item.label}</span>}
+          </div>
+          {(!isCollapsed || isMobileOpen) && (
+            <div className="flex items-center gap-2">
+              {item.badge && (
+                <span className="text-[9px] font-bold bg-[#6E2CF4] text-white px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+                  {item.badge}
+                </span>
+              )}
+              {item.shortcut && isActive && (
+                <span className="text-[10px] text-gray-400 font-medium bg-white px-1 rounded shadow-xs border border-gray-100">
+                  {item.shortcut}
+                </span>
+              )}
+            </div>
           )}
         </button>
-        {showDividerAfter && <div className="my-2 mx-1 border-t border-gray-100"></div>}
+        {showDividerAfter && <div className="h-px bg-gray-200/60 my-2 mx-3" />}
       </div>
     );
   };
 
   return (
-    <aside 
-      className={`h-screen border-r border-gray-200 bg-white flex flex-col shrink-0 select-none font-sans transition-all duration-200 ${
-        isCollapsed ? "w-[56px]" : "w-60"
-      }`}
-    >
-      {/* Brand Header */}
-      <div 
-        className={`flex items-center shrink-0 border-b border-gray-100 cursor-pointer ${
-          isCollapsed ? "justify-center py-3.5" : "px-4 py-3.5 justify-between"
-        }`}
-      >
+    <>
+      {/* Mobile Backdrop */}
+      {isMobileOpen && (
         <div 
-          className="flex items-center gap-2.5 cursor-pointer"
-          onClick={onNavigateHome}
+          className="md:hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
+          onClick={onCloseMobile}
+        />
+      )}
+
+      {/* Sidebar Container */}
+      <aside 
+        className={`fixed md:relative z-50 h-full bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out shrink-0 select-none
+          ${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+          ${isCollapsed && !isMobileOpen ? "w-[56px]" : "w-60"}
+        `}
+      >
+        {/* Brand Header */}
+        <div 
+          className={`flex items-center shrink-0 border-b border-gray-100 h-[60px] ${
+            isCollapsed ? "justify-center" : "px-4 justify-between"
+          }`}
         >
-          {isCollapsed ? (
-            <FirefliesLogoMark className="w-7.5 h-7.5 rounded-xl" />
-          ) : (
-            <FirefliesLogo size="md" darkText={true} />
+          <div 
+            className="flex items-center gap-2.5 cursor-pointer"
+            onClick={onNavigateHome}
+          >
+            {isCollapsed ? (
+              <FirefliesLogoMark className="w-7.5 h-7.5 rounded-xl" />
+            ) : (
+              <FirefliesLogo size="md" darkText={true} />
+            )}
+          </div>
+
+          {/* Collapse Toggle Button */}
+          {!isCollapsed && (
+            <button 
+              onClick={isMobileOpen ? onCloseMobile : onToggleCollapse}
+              className="p-1 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer flex items-center justify-center"
+              title={isMobileOpen ? "Close Sidebar" : "Collapse Sidebar"}
+            >
+              <ChevronsLeft className="w-4 h-4" />
+            </button>
           )}
         </div>
-
-        {/* Collapse Toggle Button */}
-        {!isCollapsed && (
-          <button 
-            onClick={onToggleCollapse}
-            className="p-1 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
-            title="Collapse Sidebar"
-          >
-            <ChevronsLeft className="w-4 h-4" />
-          </button>
-        )}
-      </div>
 
       {/* Expand Button when collapsed */}
       {isCollapsed && (
@@ -258,5 +260,6 @@ export default function Sidebar({
         </button>
       </div>
     </aside>
+    </>
   );
 }

@@ -64,7 +64,6 @@ export default function DashboardView({
   fetchMeetings,
 }: DashboardViewProps) {
 
-  const [isTrialBannerVisible, setIsTrialBannerVisible] = React.useState(true);
   const [activeHomeTab, setActiveHomeTab] = React.useState<"recent" | "upcoming" | "aifeed">("recent");
 
   // Sample upcoming meetings for Upcoming tab
@@ -148,32 +147,13 @@ export default function DashboardView({
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-white font-sans">
-      
-      {/* Free Trial Banner at Very Top */}
-      {isTrialBannerVisible && (
-        <div className="bg-[#F4F0FF] py-2 px-4 flex items-center justify-center gap-1 text-[12.5px] text-gray-700 shrink-0 relative select-none border-b border-purple-100/50">
-          <span>You are eligible for 7 days business plan free trial.</span>
-          <button 
-            onClick={() => onTriggerToast("Free trial activation coming soon!", "success")}
-            className="text-[#6E2CF4] font-medium hover:underline cursor-pointer ml-1"
-          >
-            Start free trial →
-          </button>
-          <button 
-            onClick={() => setIsTrialBannerVisible(false)}
-            className="absolute right-4 text-gray-400 hover:text-gray-600 text-sm leading-none cursor-pointer"
-          >
-            ×
-          </button>
-        </div>
-      )}
 
       {/* Header Toolbar */}
       <header className="px-6 py-3 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white select-none">
         <h1 className="text-[15px] font-bold text-gray-900">Home</h1>
         
         {/* Center Search Bar */}
-        <div className="max-w-[440px] w-full relative flex items-center">
+        <div className="max-w-[440px] w-full relative hidden md:flex items-center">
           <Search className="absolute left-3.5 w-4 h-4 text-gray-400" />
           <input
             type="text"
@@ -188,7 +168,7 @@ export default function DashboardView({
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3">
           <button 
             onClick={() => onTriggerToast("Premium plans upgrade coming soon!", "success")}
             className="bg-[#ECFDF5] hover:bg-[#D1FAE5] text-[#059669] font-medium py-1.5 px-3.5 rounded-lg text-[13px] transition-colors cursor-pointer"
